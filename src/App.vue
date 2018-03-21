@@ -30,6 +30,11 @@ export default {
     console.log('created');
 
     eventBus.$on('add', data => this.addList(data));
+    eventBus.$on('onRemove', todo => this.remove(todo));
+    eventBus.$on('onAll', () => this.onAll());
+    eventBus.$on('onActive', () => this.onActive());
+    eventBus.$on('onComplete', () => this.onComplete());
+    eventBus.$on('onRemoveAll', () => this.removeList());
   },
   computed: {
     filtered() {
@@ -41,6 +46,34 @@ export default {
     },
     count() {
       return this.todo_lists.length;
+    },
+    completed() {
+      let lists = this.todo_lists;
+      console.log('completed');
+      return lists.filter(
+        (list, index) =>  {
+          if(list.completed === true) {
+            list.active = false;
+            updateList(lists);
+            return true;
+          } else {
+            list.active = true;
+            updateList(lists);
+            return false;
+          }
+        }
+      )
+    },
+    activated() {
+      let lists = this.todo_lists;
+      console.log("active");
+      return lists.filter(
+        (list, index) => {
+          if(list.active === true){
+            return true;
+          }
+        }
+      )
     }
   },
   components: {
@@ -60,8 +93,42 @@ export default {
       appendList(todo);
       this.updateView();
       
+    },
+    remove(todo) {
+      let filtered = this.todo_lists.filter(
+        (list) => {
+          return list.task !== todo.task
+        }
+      );
+      this.todo_lists = filtered;
+      updateList(this.todo_lists);
+    },
+    onAll(){
+      this.chk_all = true;
+      this.chk_active = false;
+      this.chk_complete = false;
+    },
+    onActive() {
+      this.chk_all = false;
+      this.chk_active = true;
+      this.chk_complete = false;
+    },
+     onComplete() {
+    this.chk_all = false;
+    this.chk_active = false;
+    this.chk_complete = true;
+    },
+    removeList() {
+      let removed = this.todo_lists.filter(
+        (list) => {
+          return list.completed === false; 
+        }
+      );
+      this.todo_lists = removed;
+      updateList(this.todo_lists);
     }
   }
+ 
 }
 
 </script>

@@ -5,24 +5,26 @@
                 <label>
                     <input type="checkbox" v-model="todo.completed"/>
                     <span>{{todo.task}}</span>
-                    <button type="button" class="del" v-on:click="remove(todo)"></button>
                 </label>
+                    <button type="button" class="del" v-on:click="remove(todo)"></button>
             </li>
         </ul>
+        <status-info :sum="total" :activelist="isactive" :completelist="iscomplete"></status-info>
     </div>
 </template>
 
 <script>
 import { eventBus } from '../main';
+import statusInfo from './statusInfo';
 export default {
   name: 'todolist',
   props: ['todos', 'total', 'isactive', 'iscomplete'],
   components: {
-
+    statusInfo
   },
   methods: {
       remove(task) {
-          eventB
+          eventBus.$emit('onRemove', task);
       }
   }
 }
